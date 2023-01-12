@@ -1,0 +1,33 @@
+#!/bin/bash
+
+
+################################################
+##                                            ##
+##                Youtomp3 linux:             ##
+##											                      ##
+##		    	                                  ##
+##                                            ##
+################################################
+
+echo 'Ingresa la dirección del Video'
+read -p "URL:" url
+echo "la direccion es:" $url
+youtube-dl --list-formats $url
+read -p "Cual es el formato a descargar (Recomendado audio only 249):" format
+youtube-dl --id -f $format $url
+#read -p "Tipo de archivo (webm | m4a | mp4):" exten
+while true; do
+read -p "Selecciona el formato del video descargado (1 webm | 2 m4a | 3 mp4):" op
+case $op in
+[1]* ) format=webm; break;;
+[2]* ) format=m4a; break;;
+[3]* ) format=mp4; break;;
+*) echo "$format";;
+esac
+done
+echo "$format"
+archivo=$(find . -type f -name "*.$format"| sed "s|^\./||")
+read -p "Nombre del nuevo archivo:" filename
+ffmpeg -i $archivo -vn -ab 128k -ar 44100 -y $filename.mp3
+echo "Conversión lista"
+rm $archivo
